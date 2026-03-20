@@ -1,7 +1,8 @@
 import logging
 import os
-from pathlib import Path
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
+
 
 # 自定义 Logger 类，重写 warn 和 error 方法
 class CustomLogger(logging.Logger):
@@ -41,7 +42,6 @@ file_handler = RotatingFileHandler(
 class LocalTimeFormatter(logging.Formatter):
     def formatTime(self, record, datefmt=None):
         import datetime
-        import time
         # 强制使用UTC+8时区
         utc_time = datetime.datetime.utcfromtimestamp(record.created)
         local_time = utc_time + datetime.timedelta(hours=8)

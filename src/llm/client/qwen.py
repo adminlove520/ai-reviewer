@@ -1,12 +1,11 @@
 import os
 from typing import Dict, List, Optional, Union
 
+import dashscope
 from openai import OpenAI
 
 from src.llm.client.base import BaseClient
-from src.llm.types import NotGiven, NOT_GIVEN
-from src.utils.log import logger
-import dashscope
+from src.llm.types import NOT_GIVEN, NotGiven
 
 
 class QwenClient(BaseClient):

@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 from openai import OpenAI
 
 from src.llm.client.base import BaseClient
-from src.llm.types import NotGiven, NOT_GIVEN
+from src.llm.types import NOT_GIVEN, NotGiven
 from src.utils.log import logger
 
 
@@ -21,13 +21,13 @@ class MiniMaxClient(BaseClient):
         self.default_model = os.getenv("MINIMAX_API_MODEL", "MiniMax-M2.1")
         logger.info(f"MiniMax client initialized with base_url: {self.base_url}, model: {self.default_model}")
 
-    def completions(self, 
-                    messages: List[Dict[str, str]], 
+    def completions(self,
+                    messages: List[Dict[str, str]],
                     model: Union[Optional[str], NotGiven] = NOT_GIVEN,
                     include_reasoning: bool = False,
                     ) -> str:
         model = model or self.default_model
-        
+
         # 调用API时关闭思维链返回，减少推理内容
         try:
             # 构建API调用参数
@@ -35,11 +35,11 @@ class MiniMaxClient(BaseClient):
                 "model": model,
                 "messages": messages,
             }
-            
+
             # 只有当明确要求包含reasoning时才传递参数
             if include_reasoning:
                 api_params["extra_body"] = {"include_reasoning": include_reasoning}
-            
+
             completion = self.client.chat.completions.create(**api_params)
         except Exception as e:
             # 如果参数不支持，回退到不带参数的调用
@@ -48,10 +48,10 @@ class MiniMaxClient(BaseClient):
                 model=model,
                 messages=messages,
             )
-            
+
         if completion and completion.choices and len(completion.choices) > 0:
             raw_content = completion.choices[0].message.content
-            
+
             # 过滤thinking内容（如果返回的是包含thinking的字典）
             if isinstance(raw_content, dict):
                 content = raw_content.get("content", str(raw_content))
@@ -66,7 +66,7 @@ class MiniMaxClient(BaseClient):
                     if '请仅返回 "ok"' in user_content or "请仅返回 'ok'" in user_content:
                         if 'ok' in raw_content:
                             return 'ok'
-                
+
                 return raw_content
             else:
                 return str(raw_content)

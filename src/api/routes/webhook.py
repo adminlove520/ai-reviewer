@@ -1,11 +1,11 @@
 """
 FastAPI Routes - Webhook
 """
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request
 from pydantic import BaseModel
-from typing import Optional, List
-from src.core.engine import ReviewEngine
+
 from src.core.config import ReviewConfig
+from src.core.engine import ReviewEngine
 
 router = APIRouter()
 
@@ -25,7 +25,7 @@ async def github_webhook(request: Request):
     # 获取 GitHub event
     event = request.headers.get("X-GitHub-Event", "")
     payload = await request.json()
-    
+
     if event == "pull_request":
         action = payload.get("action", "")
         if action in ["opened", "synchronize"]:
@@ -37,7 +37,7 @@ async def github_webhook(request: Request):
                 "pr_number": pr.get("number"),
                 "title": pr.get("title")
             }
-    
+
     return {"status": "ignored", "event": event}
 
 @router.post("/review")

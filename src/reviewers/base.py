@@ -2,8 +2,10 @@
 Base Reviewer - 审查器基类
 """
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from pydantic import BaseModel
+
 
 class CodeChange(BaseModel):
     """代码变更"""
@@ -29,15 +31,15 @@ class ReviewResult(BaseModel):
 
 class BaseReviewer(ABC):
     """审查器基类"""
-    
+
     name: str = "base"
     version: str = "1.0.0"
-    
+
     @abstractmethod
     async def review(self, context: ReviewContext) -> ReviewResult:
         """执行审查"""
         pass
-    
+
     def validate_config(self) -> bool:
         """验证配置"""
         return True

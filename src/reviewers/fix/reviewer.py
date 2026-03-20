@@ -2,8 +2,10 @@
 Fix Reviewer - 代码修复审查器
 基于审查结果生成修复代码
 """
-from typing import List, Dict, Any, Optional
+from typing import Dict, List, Optional
+
 from src.reviewers.base import BaseReviewer, ReviewContext, ReviewResult
+
 
 class FixResult:
     """修复结果"""
@@ -23,13 +25,13 @@ class FixResult:
 
 class FixReviewer(BaseReviewer):
     """代码修复审查器"""
-    
+
     name = "fix"
     version = "1.0.0"
-    
+
     def __init__(self):
         self.fixes: List[FixResult] = []
-    
+
     async def review(self, context: ReviewContext) -> ReviewResult:
         """执行代码修复"""
         if not context.changes:
@@ -37,20 +39,20 @@ class FixReviewer(BaseReviewer):
                 status="skipped",
                 summary="No changes to review"
             )
-        
+
         # 收集代码
         code_files = self._collect_code_files(context)
-        
+
         # TODO: 调用 LLM 生成修复代码
         # 实际实现需要调用 LLM
-        
+
         return ReviewResult(
             status="success",
             summary=f"Generated {len(self.fixes)} fixes",
             issues=[],
             score=85
         )
-    
+
     def _collect_code_files(self, context: ReviewContext) -> List[Dict]:
         """收集代码文件"""
         files = []
@@ -60,14 +62,14 @@ class FixReviewer(BaseReviewer):
                 'diff': change.diff
             })
         return files
-    
+
     def _build_fix_prompt(self, file: Dict, issues: List[Dict]) -> str:
         """构建修复提示"""
         issues_text = "\n".join([
             f"- {issue.get('description', 'Unknown issue')} at line {issue.get('line', '?')}"
             for issue in issues
         ])
-        
+
         return f"""你是一位资深的软件开发工程师。
 
 请根据以下代码审查问题，生成修复后的代码:
@@ -86,19 +88,19 @@ class FixReviewer(BaseReviewer):
 3. 修复的置信度 (0-1)
 
 请只给出代码修复，不要有其他解释。"""
-    
+
     def _generate_fix(self, file: Dict, issues: List[Dict]) -> Optional[FixResult]:
         """生成单个文件的修复"""
         if not issues:
             return None
-        
+
         prompt = self._build_fix_prompt(file, issues)
-        
+
         # TODO: 调用 LLM 生成修复
         # 实际实现需要调用 LLM API
-        
+
         return None
-    
+
     def validate_config(self) -> bool:
         """验证配置"""
         return True

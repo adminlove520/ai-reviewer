@@ -1,7 +1,7 @@
 from abc import abstractmethod
-from typing import List, Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
-from src.llm.types import NotGiven, NOT_GIVEN
+from src.llm.types import NOT_GIVEN, NotGiven
 from src.utils.log import logger
 
 

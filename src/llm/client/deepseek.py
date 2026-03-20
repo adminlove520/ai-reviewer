@@ -4,9 +4,8 @@ from typing import Dict, List, Optional, Union
 from openai import OpenAI
 
 from src.llm.client.base import BaseClient
-from src.llm.types import NotGiven, NOT_GIVEN
+from src.llm.types import NOT_GIVEN, NotGiven
 from src.utils.log import logger
-import requests
 
 
 class DeepSeekClient(BaseClient):
@@ -26,18 +25,18 @@ class DeepSeekClient(BaseClient):
         try:
             model = model or self.default_model
             logger.debug(f"Sending request to DeepSeek API. Model: {model}, Messages: {messages}")
-            
+
             completion = self.client.chat.completions.create(
                 model=model,
                 messages=messages
             )
-            
+
             if not completion or not completion.choices:
                 logger.error("Empty response from DeepSeek API")
                 return "AI服务返回为空，请稍后重试"
-                
+
             return completion.choices[0].message.content
-            
+
         except Exception as e:
             logger.error(f"DeepSeek API error: {str(e)}")
             # 检查是否是认证错误

@@ -1,4 +1,4 @@
-from typing import Optional, List, Literal
+from typing import Literal
 
 from pydantic import BaseModel
 from typing_extensions import override

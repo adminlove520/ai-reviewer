@@ -2,15 +2,17 @@
 Security Reviewer - 安全审查器
 集成 skill-dfyx_code_security_review
 """
-from typing import List, Dict, Any
+from typing import Dict, List
+
 from src.reviewers.base import BaseReviewer, ReviewContext, ReviewResult
+
 
 class SecurityReviewer(BaseReviewer):
     """安全审查器 - 集成东方隐侠 skill-dfyx"""
-    
+
     name = "security"
     version = "1.0.0"
-    
+
     def __init__(self, mode: str = "standard"):
         """
         初始化安全审查器
@@ -32,7 +34,7 @@ class SecurityReviewer(BaseReviewer):
             "D9-logic",          # 业务逻辑
             "D10-supply"         # 供应链
         ]
-    
+
     async def review(self, context: ReviewContext) -> ReviewResult:
         """执行安全审查"""
         if not context.changes:
@@ -40,39 +42,39 @@ class SecurityReviewer(BaseReviewer):
                 status="skipped",
                 summary="No changes to review"
             )
-        
+
         # 收集代码
         code_files = self._collect_code_files(context)
-        
+
         if not code_files:
             return ReviewResult(
                 status="skipped",
                 summary="No supported code files found"
             )
-        
+
         # 根据模式选择审查维度
         dimensions = self._get_dimensions_by_mode()
-        
+
         # 构建审查提示
         prompt = self._build_prompt(code_files, dimensions)
-        
+
         # TODO: 调用 LLM 进行安全审查
         # 实际实现需要集成 skill-dfyx
-        
+
         return ReviewResult(
             status="success",
             summary=f"Security review completed in {self.mode} mode",
             issues=[],
             score=100
         )
-    
+
     def _collect_code_files(self, context: ReviewContext) -> List[Dict[str, str]]:
         """收集代码文件"""
         supported_extensions = {
             '.py', '.java', '.js', '.ts', '.jsx', '.tsx',
             '.go', '.php', '.rb', '.cs', '.c', '.cpp', '.h'
         }
-        
+
         files = []
         for change in context.changes:
             ext = change.file_path.split('.')[-1] if '.' in change.file_path else ''
@@ -81,9 +83,9 @@ class SecurityReviewer(BaseReviewer):
                     'path': change.file_path,
                     'diff': change.diff
                 })
-        
+
         return files
-    
+
     def _get_dimensions_by_mode(self) -> List[str]:
         """根据模式获取审查维度"""
         if self.mode == "quick":
@@ -91,17 +93,17 @@ class SecurityReviewer(BaseReviewer):
             return ["D1-injection", "D2-auth", "D5-file", "D6-ssrf"]
         elif self.mode == "standard":
             # Standard 模式: OWASP Top 10
-            return ["D1-injection", "D2-auth", "D3-authz", 
-                   "D4-deser", "D5-file", "D6-ssrf", 
+            return ["D1-injection", "D2-auth", "D3-authz",
+                   "D4-deser", "D5-file", "D6-ssrf",
                    "D7-crypto", "D8-config"]
         else:
             # Deep 模式: 全部维度
             return self.dimensions
-    
+
     def _build_prompt(self, files: List[Dict], dimensions: List[str]) -> str:
         """构建安全审查提示"""
         file_list = "\n".join([f"- {f['path']}" for f in files[:10]])
-        
+
         dimension_desc = {
             "D1-injection": "SQL注入、命令注入、LDAP注入等",
             "D2-auth": "认证机制、密码存储、会话管理",
@@ -114,9 +116,9 @@ class SecurityReviewer(BaseReviewer):
             "D9-logic": "业务逻辑漏洞",
             "D10-supply": "依赖漏洞、CVE"
         }
-        
+
         dims = "\n".join([f"- {d}: {dimension_desc.get(d, '')}" for d in dimensions])
-        
+
         return f"""你是一位专业的安全审计工程师。
 
 请对以下代码进行安全审计:
@@ -136,7 +138,7 @@ class SecurityReviewer(BaseReviewer):
 4. 修复建议
 
 请给出详细的安全审计报告。"""
-    
+
     def validate_config(self) -> bool:
         """验证配置"""
         return self.mode in ["quick", "standard", "deep"]

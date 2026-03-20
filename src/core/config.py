@@ -1,8 +1,10 @@
 """
 Configuration
 """
+from typing import Optional
+
 from pydantic import BaseModel
-from typing import Optional, List
+
 
 class LLMConfig(BaseModel):
     provider: str = "deepseek"

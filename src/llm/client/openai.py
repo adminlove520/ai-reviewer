@@ -4,9 +4,7 @@ from typing import Dict, List, Optional, Union
 from openai import OpenAI
 
 from src.llm.client.base import BaseClient
-from src.llm.types import NotGiven, NOT_GIVEN
-from src.utils.log import logger
-import openai
+from src.llm.types import NOT_GIVEN, NotGiven
 
 
 class OpenAIClient(BaseClient):

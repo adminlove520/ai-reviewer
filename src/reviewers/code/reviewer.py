@@ -2,19 +2,21 @@
 Code Reviewer - 代码审查器
 """
 from typing import List
-from src.reviewers.base import BaseReviewer, ReviewContext, ReviewResult
+
 from src.llm.factory import Factory
+from src.reviewers.base import BaseReviewer, ReviewContext, ReviewResult
+
 
 class CodeReviewer(BaseReviewer):
     """代码审查器"""
-    
+
     name = "code"
     version = "1.0.0"
-    
+
     def __init__(self, style: str = "professional"):
         self.style = style
         self.llm = Factory().getClient()
-    
+
     async def review(self, context: ReviewContext) -> ReviewResult:
         """执行代码审查"""
         if not context.changes:
@@ -22,20 +24,20 @@ class CodeReviewer(BaseReviewer):
                 status="skipped",
                 summary="No changes to review"
             )
-        
+
         # 收集所有 diff
         all_diffs = []
         for change in context.changes:
             diff_text = f"File: {change.file_path}\n\n{change.diff}"
             all_diffs.append(diff_text)
-        
+
         # 调用 LLM 审查
         prompt = self._build_prompt(all_diffs)
         messages = [
             {"role": "system", "content": self._get_system_prompt()},
             {"role": "user", "content": prompt}
         ]
-        
+
         try:
             result = self.llm.completions(messages)
             return ReviewResult(
@@ -51,7 +53,7 @@ class CodeReviewer(BaseReviewer):
                 issues=[],
                 score=0
             )
-    
+
     def _get_system_prompt(self) -> str:
         """获取系统提示词"""
         prompts = {
@@ -61,11 +63,11 @@ class CodeReviewer(BaseReviewer):
             "humorous": "你是一位幽默的代码审查员，要轻松有趣。"
         }
         return prompts.get(self.style, prompts["professional"])
-    
+
     def _build_prompt(self, diffs: List[str]) -> str:
         """构建审查提示词"""
         diff_text = "\n\n---\n\n".join(diffs[:5])  # 限制数量
-        
+
         return f"""请审查以下代码变更:
 
 {diff_text}
