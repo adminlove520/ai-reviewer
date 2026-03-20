@@ -4,6 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/adminlove520/ai-reviewer)](https://github.com/adminlove520/ai-reviewer)
 [![License](https://img.shields.io/github/license/adminlove520/ai-reviewer)](LICENSE)
+[![Tests](https://github.com/adminlove520/ai-reviewer/actions/workflows/test.yml/badge.svg)](https://github.com/adminlove520/ai-reviewer/actions)
 
 ## 核心特性
 
@@ -45,6 +46,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           llm-provider: deepseek
+          review-style: professional
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
 ```
 
 ### 2. Docker 部署
@@ -74,21 +78,66 @@ python api.py
 | `/api/webhook/github` | POST | GitHub Webhook |
 | `/api/review` | POST | 通用审查 |
 
+## 审查器
+
+### 代码审查 (Code Reviewer)
+
+```python
+from src.reviewers import CodeReviewer
+
+reviewer = CodeReviewer(style="professional")
+result = await reviewer.review(context)
+```
+
+### 安全审计 (Security Reviewer)
+
+```python
+from src.reviewers import SecurityReviewer
+
+# quick / standard / deep
+reviewer = SecurityReviewer(mode="standard")
+result = await reviewer.review(context)
+```
+
+### 代码修复 (Fix Reviewer)
+
+```python
+from src.reviewers import FixReviewer
+
+reviewer = FixReviewer()
+result = await reviewer.review(context)
+```
+
 ## 项目结构
 
 ```
 ai-reviewer/
 ├── src/
-│   ├── api/           # API 层
-│   ├── core/          # 核心引擎
-│   ├── reviewers/     # 审查器
-│   │   └── code/     # 代码审查
-│   ├── triggers/      # 触发器
-│   ├── outputs/      # 输出器
-│   ├── llm/          # LLM 客户端
-│   └── utils/        # 工具
-├── .github/workflows/ # GitHub Workflows
-└── api.py            # 入口
+│   ├── api/                    # API 层
+│   │   └── routes/
+│   │       └── webhook.py
+│   ├── core/                   # 核心引擎
+│   │   ├── engine.py
+│   │   └── config.py
+│   ├── reviewers/              # 审查器
+│   │   ├── code/              # 代码审查
+│   │   ├── security/          # 安全审计
+│   │   └── fix/              # 代码修复
+│   ├── outputs/               # 消息推送
+│   │   ├── dingtalk.py
+│   │   ├── feishu.py
+│   │   ├── wecom.py
+│   │   └── github.py
+│   ├── llm/                   # LLM 客户端
+│   │   └── client/
+│   └── utils/                 # 工具
+├── tests/                      # 测试
+│   └── unit/
+├── .github/
+│   ├── workflows/             # GitHub Workflows
+│   └── actions/               # GitHub Actions
+├── api.py                     # API 入口
+└── requirements.txt
 ```
 
 ## 配置
@@ -103,7 +152,7 @@ OPENAI_API_KEY=xxx
 ANTHROPIC_API_KEY=xxx
 
 # 审查配置
-REVIEW_STYLE=professional  # professional/sarcastic/gentle/humorous
+REVIEW_STYLE=professional
 SUPPORTED_EXTENSIONS=.py,.js,.ts,.java,.go,.php
 ```
 
