@@ -2,9 +2,20 @@
 Unit tests for reviewers
 """
 import pytest
-from src.reviewers.code import CodeReviewer
-from src.reviewers.security import SecurityReviewer
-from src.reviewers.base import ReviewContext, CodeChange
+import sys
+import os
+
+# 添加项目根目录到 Python 路径
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    from src.reviewers.code import CodeReviewer
+    from src.reviewers.security import SecurityReviewer
+    from src.reviewers.base import ReviewContext, CodeChange
+except ModuleNotFoundError:
+    from reviewers.code import CodeReviewer
+    from reviewers.security import SecurityReviewer
+    from reviewers.base import ReviewContext, CodeChange
 
 class TestCodeReviewer:
     """代码审查器测试"""
