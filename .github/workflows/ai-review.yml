@@ -5,10 +5,9 @@ name: AI Code Review
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [master]
+    branches: [main, develop]
   push:
-    branches: [master]
-  workflow_dispatch:
+    branches: [main, develop]
 
 jobs:
   review:
@@ -26,7 +25,7 @@ jobs:
       - name: Run AI Review
         uses: adminlove520/ai-reviewer-action@v1
         with:
-          llm-provider: ${{ vars.LLM_PROVIDER || 'openai' }}
+          llm-provider: ${{ vars.LLM_PROVIDER || 'deepseek' }}
           review-style: ${{ vars.REVIEW_STYLE || 'professional' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
