@@ -1,3 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-reviewer"
+version = "2.0.0"
+description = "基于大模型的自动化代码审查工具"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "openai>=1.10.0",
+    "anthropic>=0.18.0",
+    "requests>=2.31.0",
+    "pyyaml>=6.0.1",
+    "jinja2>=3.1.3",
+    "loguru>=0.7.2",
+    "PyGithub>=2.2.0",
+    "aiohttp>=3.9.0",
+    "httpx>=0.26.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"
@@ -11,7 +45,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --cov=src --cov-report=term-missing"
+addopts = "-v"
 
 [tool.coverage.run]
 source = ["src"]
