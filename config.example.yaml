@@ -1,0 +1,52 @@
+# AI Reviewer 配置示例
+# 复制此文件为 config.yaml 并修改配置
+
+# LLM 配置
+llm:
+  provider: deepseek  # deepseek, openai, anthropic, qwen, zhipuai, minimax
+  api_key: ""  # 填入你的 API Key
+  base_url: ""  # 可选，自定义 API 地址
+  model: ""  # 可选，自定义模型
+
+# 审查配置
+review:
+  style: professional  # professional, sarcastic, gentle, humorous
+  supported_extensions: ".py,.js,.ts,.jsx,.tsx,.java,.go,.php,.rb,.cs"
+  
+# 安全审查配置 (可选)
+security:
+  enabled: true
+  mode: standard  # quick, standard, deep
+  dimensions:
+    - D1-injection
+    - D2-auth
+    - D3-authz
+    - D4-deser
+    - D5-file
+
+# Git 配置
+github:
+  token: ""  # GitHub Token
+
+# 消息推送配置
+notifications:
+  # 钉钉
+  dingtalk:
+    enabled: false
+    webhook_url: ""
+  
+  # 飞书
+  feishu:
+    enabled: false
+    webhook_url: ""
+  
+  # 企业微信
+  wecom:
+    enabled: false
+    webhook_key: ""
+
+# 服务配置
+server:
+  host: "0.0.0.0"
+  port: 5001
+  debug: false
