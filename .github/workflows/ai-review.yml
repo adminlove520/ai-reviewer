@@ -5,9 +5,9 @@ name: AI Code Review
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [main, develop, master]
+    branches: [main]
   push:
-    branches: [main, develop, master]
+    branches: [main]
 
 jobs:
   review:
